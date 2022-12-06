@@ -1,0 +1,3 @@
+torch
+faiss-cpu
+numpy
