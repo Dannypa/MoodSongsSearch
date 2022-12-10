@@ -2,7 +2,7 @@ import os
 import time
 import spotipy
 import tqdm
-from src import config
+import config
 import json
 import lyricsgenius as lg
 import logging
@@ -119,7 +119,7 @@ def gen_db():
     if testing:
         fw = "test_db.json"
     else:
-        fw = config.DATA_PATH
+        fw = config.SONG_DATA_FILE
     with open(config.DOWNLOAD_LAST, 'r') as f:
         start, index = map(int, f.readline().split())
     with open(fr, 'r', encoding='utf-8') as f:
