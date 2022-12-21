@@ -1,6 +1,6 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler, CallbackQueryHandler
 import logging
-from token import TOKEN
+from config import TOKEN
 from fast_search import search_meta
 
 logging.basicConfig(
