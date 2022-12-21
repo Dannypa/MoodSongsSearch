@@ -133,3 +133,9 @@ dmypy.json
 
 # Data files
 src/data
+
+# draft file
+*draft.py
+
+# faiss models i guess
+*faiss_model
