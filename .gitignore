@@ -133,3 +133,9 @@ dmypy.json
 
 # Data files
 src/data
+
+# last temporary files
+/src/last
+
+# clean draft file
+clean.ipynb

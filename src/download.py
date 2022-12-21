@@ -95,17 +95,20 @@ def get_song_data(track_uri: int):
     return data
 
 
-def download_data(track: str):
+def download_data(track: str, lyrics_need=False):
     global res
     uri, artist, song = track.split(config.SEP_LOC)
-    lyrics = scrape_lyrics(artist, song)
-    if lyrics == "no text":
-        return
     meta = get_song_data(uri)
     if len(meta) == 0:
         return
+    cur = {"meta": meta, "artist": artist, "song": song}
+    if lyrics_need:
+        lyrics = scrape_lyrics(artist, song)
+        if lyrics == "no text":
+            return
+        cur["lyrics"] = lyrics
+    res['data'].append(cur)
     # encoded = list(map(lambda x: x.item(), model.encode(lyrics)))
-    res['data'].append({"lyrics": lyrics, "meta": meta, "artist": artist, "song": song})
 
 
 def gen_db():
@@ -120,12 +123,15 @@ def gen_db():
         fw = "test_db.json"
     else:
         fw = config.SONG_DATA_FILE
+    if not os.path.exists(config.DOWNLOAD_LAST):
+        with open(config.DOWNLOAD_LAST, 'w') as f:
+            f.write("0 0")
     with open(config.DOWNLOAD_LAST, 'r') as f:
         start, index = map(int, f.readline().split())
     with open(fr, 'r', encoding='utf-8') as f:
         data = f.readline().split(config.SEP_GLOB)
         res = {"data": []}
-        step = 100
+        step = 20
         stime = time.perf_counter()
         for i in tqdm.trange(start, len(data), step):
             threads = [Thread(target=download_data, args=(data[i + j],)) for j in range(step)]
