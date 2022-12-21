@@ -133,6 +133,7 @@ dmypy.json
 
 # Data files
 src/data
+/src/token.py
 
 # draft file
 *draft.py

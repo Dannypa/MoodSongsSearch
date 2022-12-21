@@ -3,7 +3,7 @@ import faiss
 import os
 from sentence_transformers import SentenceTransformer
 from model import Net, DEVICE
-import config 
+import config
 import tqdm
 import json
 import numpy as np
@@ -22,28 +22,11 @@ tname = "multi-qa-mpnet-base-dot-v1"
 bert = SentenceTransformer(tname)
 print(os.getcwd())
 
-
 # loading model
-checkpoint = torch.load(os.path.join(config.SAVE_DIR, config.MODEL_NAME + "-" + tname + "-FINAL.pt"), map_location=DEVICE)
+checkpoint = torch.load(os.path.join(config.SAVE_DIR, config.MODEL_NAME + "-" + tname + "-FINAL.pt"),
+                        map_location=DEVICE)
 model = Net(number_params=5)
-model.load_state_dict(checkpoint) 
-# yes model
-
-
-# loading data
-
-# lyrics = []
-# meta_lyr = []
-# dir = config.LYRICS_PATH
-# for file in tqdm.tqdm(os.listdir(dir)):
-#     # if len(meta_lyr) > 100:
-#     #     break
-#     with open(os.path.join(dir, file), 'r') as f:
-#         cur = json.load(f)
-#         for el in cur:
-#             lyrics.append(el['lyrics'])
-#             meta_lyr.append(el['meta'])
-
+model.load_state_dict(checkpoint)
 
 song_data = []
 meta = []
@@ -51,7 +34,7 @@ dir = config.META_PATH
 for file in tqdm.tqdm(os.listdir(dir)):
     with open(os.path.join(dir, file), 'r') as f:
         # if len(meta) > 100:
-        #     break   
+        #     break
         cur = json.load(f)
         # print(cur)
         for el in cur['data']:
@@ -62,7 +45,6 @@ for file in tqdm.tqdm(os.listdir(dir)):
             # print(meta)
             # print(meta * np.array(config.meta_max_val))
             # exit(0)
-
 
 # print(meta)
 
@@ -99,11 +81,11 @@ def dist(v1, v2):
         np.sum(
             (v1 - v2) ** 2
         )
-    ), np.sqrt(np.sum(v1**2))
+    ), np.sqrt(np.sum(v1 ** 2))
 
 
 
-def find_k_best(cur, lk:int, arr:np.array, f:callable):
+def find_k_best(cur, lk: int, arr: np.array, f: callable):
     return indexMeta.search(np.array([cur]), lk)[1].tolist()[0], -1
     # mns = [1_000_000_000 for i in range(lk)]
     # inds = [-1 for i in range(lk)]
@@ -121,12 +103,15 @@ def find_k_best(cur, lk:int, arr:np.array, f:callable):
 
 
 last = None
+
+
 def search_meta(query):
     global last
     t = time.time()
-    query_vector = model((torch.tensor(bert.encode([query])) / config.lyrics_max_val)).detach().numpy()[0] * config.meta_max_val
+    query_vector = model((torch.tensor(bert.encode([query])) / config.lyrics_max_val)).detach().numpy()[
+                       0] * config.meta_max_val
     mi, mns = find_k_best(query_vector, 5, meta, dist)
-    print('totaltime: {}'.format(time.time()-t))
+    print('totaltime: {}'.format(time.time() - t))
     return mi
     # print(query_vector)
     # lk = 1  # short for lyrics k
@@ -182,5 +167,4 @@ with torch.no_grad():
             # print(song_data[ind][0] + " - " + song_data[ind][1])
         print(sorted(cnt.values()))
         # for i in cnt:
-        #     print(song_data[i], meta[i]) 
-        
+        #     print(song_data[i], meta[i])
