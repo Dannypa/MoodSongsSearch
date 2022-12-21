@@ -139,3 +139,10 @@ src/data
 
 # clean draft file
 clean.ipynb
+/src/token.py
+
+# draft file
+*draft.py
+
+# faiss models i guess
+*faiss_model
