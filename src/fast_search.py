@@ -72,7 +72,7 @@ for file in tqdm.tqdm(os.listdir(dir)):
 # indexMeta = faiss.IndexIDMap(faiss.IndexFlatIP(meta[0].shape[0]))
 indexMeta = faiss.IndexFlatL2(meta[0].shape[0])
 indexMeta.add(np.array(meta))
-faiss.write_index(indexMeta, "meta_model")
+faiss.write_index(indexMeta, "meta_faiss_model")
 
 
 
@@ -152,19 +152,25 @@ def search_meta(query):
     # return res
     # # return top_k[1].tolist()[0]
 
+def get_songs(query):
+    res = []
+    for i in search_meta(query):
+        res.append(song_data[i])
+    return res
 
-print("Testing...")
-cnt = dict()
-with torch.no_grad():
-    while True:
-        q = input()
-        for ind in search_meta(q):
-            print(song_data[ind])
-            if ind in cnt:
-                cnt[ind] += 1
-            else:
-                cnt[ind] = 1
-            # print(song_data[ind][0] + " - " + song_data[ind][1])
-        print(sorted(cnt.values()))
-        # for i in cnt:
-        #     print(song_data[i], meta[i])
+if __name__ == "__main__":
+    print("Testing...")
+    cnt = dict()
+    with torch.no_grad():
+        while True:
+            q = input()
+            for ind in search_meta(q):
+                print(song_data[ind])
+                if ind in cnt:
+                    cnt[ind] += 1
+                else:
+                    cnt[ind] = 1
+                # print(song_data[ind][0] + " - " + song_data[ind][1])
+            print(sorted(cnt.values()))
+            # for i in cnt:
+            #     print(song_data[i], meta[i])

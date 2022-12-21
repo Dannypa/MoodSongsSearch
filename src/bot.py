@@ -1,7 +1,7 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler, CallbackQueryHandler
 import logging
 from config import TOKEN
-from fast_search import search_meta
+import fast_search
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
@@ -31,7 +31,8 @@ def error(update, context):
 
 def music(update, context):
     query = ' '.join(map(str, context.user_data['messages']))
-    update.message.reply_text(search_meta(query))
+    context.user_data['messages'] = []
+    update.message.reply_text(fast_search.get_songs(query))
 
 
 def main():
