@@ -23,8 +23,7 @@ bert = SentenceTransformer(tname)
 print(os.getcwd())
 
 # loading model
-checkpoint = torch.load(os.path.join(config.SAVE_DIR, config.MODEL_NAME + "-" + tname + "-FINAL.pt"),
-                        map_location=DEVICE)
+checkpoint = torch.load(os.path.join(config.SAVE_DIR, config.MODEL_NAME + "-" + tname + "-FINAL.pt"), map_location=DEVICE)
 model = Net(number_params=5)
 model.load_state_dict(checkpoint)
 
@@ -75,14 +74,12 @@ indexMeta.add(np.array(meta))
 faiss.write_index(indexMeta, "meta_faiss_model")
 
 
-
 def dist(v1, v2):
     return np.sqrt(
         np.sum(
             (v1 - v2) ** 2
         )
     ), np.sqrt(np.sum(v1 ** 2))
-
 
 
 def find_k_best(cur, lk: int, arr: np.array, f: callable):
@@ -152,11 +149,13 @@ def search_meta(query):
     # return res
     # # return top_k[1].tolist()[0]
 
+
 def get_songs(query):
     res = []
     for i in search_meta(query):
         res.append(song_data[i])
     return res
+
 
 if __name__ == "__main__":
     print("Testing...")

@@ -1,3 +1,5 @@
+import threading
+
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler, CallbackQueryHandler
 import logging
 from config import TOKEN
@@ -8,10 +10,10 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
+updater = None
 
 def start(update, context):
-    update.message.reply_text("Hi!")
+    update.message.reply_text("Привет! \nHi!")
     context.user_data['messages'] = []
 
 
@@ -32,19 +34,36 @@ def error(update, context):
 def music(update, context):
     query = ' '.join(map(str, context.user_data['messages']))
     context.user_data['messages'] = []
-    update.message.reply_text(fast_search.get_songs(query))
+    text = "Вот ваши рекомендации: / " \
+           "Here are your recommendations: \n"
+    res = fast_search.get_songs(query)
+    for song in res:
+        text += f'{song[1]} - {song[0]} \n'
+    update.message.reply_text(text)
+
+
+def stop(update, context):
+    update.message.reply_text("Приятного прослушивания!")
+    threading.Thread(target=shutdown).start()
 
 
 def main():
+    global updater
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("music", music))
+    dp.add_handler(CommandHandler("stop", stop))
     dp.add_handler(MessageHandler(Filters.text, write_message))
     dp.add_error_handler(error)
     updater.start_polling()
     updater.idle()
+
+
+def shutdown():
+    updater.stop()
+    updater.is_idle = False
 
 
 if __name__ == '__main__':
